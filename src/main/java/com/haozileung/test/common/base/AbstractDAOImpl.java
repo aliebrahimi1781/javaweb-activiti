@@ -7,10 +7,10 @@ package com.haozileung.test.common.base;
 
 import java.io.Serializable;
 
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.googlecode.genericdao.dao.hibernate.GenericDAOImpl;
 
 /**
  * <p>
@@ -22,35 +22,12 @@ import org.springframework.transaction.annotation.Transactional;
  * @version V1.0
  */
 @Transactional
-public abstract class AbstractDAOImpl<T, ID extends Serializable> implements
-		IDAO<T, ID> {
-	@Autowired
-	private SessionFactory sessionFactory;
-
-	public Session getSession() {
-		return sessionFactory.getCurrentSession();
-	}
-
-	@SuppressWarnings("unchecked")
+public abstract class AbstractDAOImpl<T, ID extends Serializable> extends
+		GenericDAOImpl<T, ID> implements IDAO<T, ID> {
+	// 注入SessionFactory
+	// @Autowired
 	@Override
-	public ID save(T t) {
-		return (ID) getSession().save(t);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public T find(ID id) {
-		return (T) getSession().get(getPOJOClass(), id);
-	}
-
-	@Override
-	public void update(T t) {
-		getSession().update(t);
-		;
-	}
-
-	@Override
-	public void delete(T t) {
-		getSession().delete(t);
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		super.setSessionFactory(sessionFactory);
 	}
 }

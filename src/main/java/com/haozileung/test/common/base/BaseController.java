@@ -19,9 +19,12 @@ import org.slf4j.LoggerFactory;
  * @author lianghaopeng
  * @version V1.0
  */
-@SuppressWarnings("serial")
 public abstract class BaseController implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5567430967270107013L;
 	protected Logger logger = LoggerFactory.getLogger(BaseController.class
 			.getName());
 

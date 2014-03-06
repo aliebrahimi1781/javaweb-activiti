@@ -49,31 +49,18 @@ public class Apply implements IEntity {
 	private Date applyDate;
 	@Column(name = "content")
 	private String content;
-	@Column(name = "result")
-	private Integer result;
-	@Column(name = "comment")
-	private String comment;
-	@Column(name = "charge")
-	private Double charge;
+	@Column(name = "result1")
+	private Integer result1;
+	@Column(name = "comment1")
+	private String comment1;
+	@Column(name = "result2")
+	private Integer result2;
+	@Column(name = "comment2")
+	private String comment2;
+	@Column(name = "numberOfDays")
+	private Integer numberOfDays;
 	@Column(name = "status")
 	private Integer status;
-
-	public Apply(Integer applyId, String applier, Date applyDate,
-			String content, Integer result, String comment, Double charge,
-			Integer status) {
-		super();
-		this.applyId = applyId;
-		this.applier = applier;
-		this.applyDate = applyDate;
-		this.content = content;
-		this.result = result;
-		this.comment = comment;
-		this.charge = charge;
-		this.status = status;
-	}
-
-	public Apply() {
-	}
 
 	public Integer getApplyId() {
 		return applyId;
@@ -107,28 +94,44 @@ public class Apply implements IEntity {
 		this.content = content;
 	}
 
-	public Integer getResult() {
-		return result;
+	public Integer getResult1() {
+		return result1;
 	}
 
-	public void setResult(Integer result) {
-		this.result = result;
+	public void setResult1(Integer result1) {
+		this.result1 = result1;
 	}
 
-	public String getComment() {
-		return comment;
+	public String getComment1() {
+		return comment1;
 	}
 
-	public void setComment(String comment) {
-		this.comment = comment;
+	public void setComment1(String comment1) {
+		this.comment1 = comment1;
 	}
 
-	public Double getCharge() {
-		return charge;
+	public Integer getResult2() {
+		return result2;
 	}
 
-	public void setCharge(Double charge) {
-		this.charge = charge;
+	public void setResult2(Integer result2) {
+		this.result2 = result2;
+	}
+
+	public String getComment2() {
+		return comment2;
+	}
+
+	public void setComment2(String comment2) {
+		this.comment2 = comment2;
+	}
+
+	public Integer getNumberOfDays() {
+		return numberOfDays;
+	}
+
+	public void setNumberOfDays(Integer numberOfDays) {
+		this.numberOfDays = numberOfDays;
 	}
 
 	public Integer getStatus() {
@@ -137,5 +140,39 @@ public class Apply implements IEntity {
 
 	public void setStatus(Integer status) {
 		this.status = status;
-	}	
+	}
+
+	/**
+	 * @param applyId
+	 * @param applier
+	 * @param applyDate
+	 * @param content
+	 * @param result1
+	 * @param comment1
+	 * @param result2
+	 * @param comment2
+	 * @param numberOfDays
+	 * @param status
+	 */
+	public Apply(Integer applyId, String applier, Date applyDate,
+			String content, Integer result1, String comment1, Integer result2,
+			String comment2, Integer numberOfDays, Integer status) {
+		super();
+		this.applyId = applyId;
+		this.applier = applier;
+		this.applyDate = applyDate;
+		this.content = content;
+		this.result1 = result1;
+		this.comment1 = comment1;
+		this.result2 = result2;
+		this.comment2 = comment2;
+		this.numberOfDays = numberOfDays;
+		this.status = status;
+	}
+
+	/**
+	 * 
+	 */
+	public Apply() {
+	}
 }

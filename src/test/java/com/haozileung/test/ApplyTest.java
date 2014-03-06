@@ -5,19 +5,29 @@
  */
 package com.haozileung.test;
 
-import java.util.Date;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import org.activiti.engine.HistoryService;
+import org.activiti.engine.RepositoryService;
+import org.activiti.engine.RuntimeService;
+import org.activiti.engine.TaskService;
+import org.activiti.engine.task.Task;
+import org.activiti.engine.test.ActivitiRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.haozileung.test.dao.apply.IApplyDao;
+import com.haozileung.test.dao.ApplyRepository;
 import com.haozileung.test.pojo.apply.Apply;
 
 /**
@@ -33,27 +43,94 @@ import com.haozileung.test.pojo.apply.Apply;
 @RunWith(SpringJUnit4ClassRunner.class)
 // 配置spring配置文件位置
 @ContextConfiguration(locations = { "classpath*:applicationContext*.xml" })
-// 配置测试监听器，其中TransactionalTestExecutionListener用于解析和事务有关的注解，DependencyInjectionTestExecutionListener解析和spring自动装配有关的注解
-@TestExecutionListeners({ TransactionalTestExecutionListener.class,
-		DependencyInjectionTestExecutionListener.class })
-// 配置事务管理器，如果不指定名字，则默认装配名字为transactionManager的bean
-@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
+@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = false)
 public class ApplyTest {
+	private final Logger logger = LoggerFactory.getLogger(ApplyTest.class);
 	@Autowired
-	private IApplyDao applyDao;
+	private ApplyRepository applyRepository;
+
+	@Autowired
+	private RuntimeService runtimeService;
+
+	@Autowired
+	private TaskService taskService;
+
+	@Autowired
+	private RepositoryService repositoryService;
+	@Autowired
+	private HistoryService historyService;
+
+	@Autowired
+	@Rule
+	public ActivitiRule activitiSpringRule;
 
 	@Test
-	public void testApply() {
-		Apply apply = new Apply(1, "Haozi", new Date(), "test for apply", 0,
-				"approved", 0.5, 1);
-		applyDao.save(apply);
+	public void test() {
+		startProcess();
+		waitTime(5);
+		pmApprove();
+		waitTime(5);
+		dmApprove();
+		waitTime(60);
+	}
 
-		Apply a1 = applyDao.find(1);
+	@Transactional
+	public void startProcess() {
 
-		System.out.println(a1.getApplier());
-		
-		Apply a2 = applyDao.find(1);
+		Calendar c = Calendar.getInstance();
+		c.add(Calendar.SECOND, 10);
+		Apply a = new Apply(null, "Haozi", c.getTime(), "apply from test", 0,
+				"unknown", 0, "unknown", 1, 0);
+		applyRepository.save(a);
 
-		System.out.println(a2.getContent());
+		List<Apply> applies = applyRepository.findAll();
+		for (Apply apply : applies) {
+			if (apply.getStatus().equals(0)) {
+				Map<String, Object> variables = new HashMap<String, Object>();
+				variables.put("apply", apply);
+				runtimeService.startProcessInstanceByKey("vacationRequest",
+						variables);
+			}
+		}
+		logger.info("Number of process instances: "
+				+ runtimeService.createProcessInstanceQuery().count());
+	}
+
+	@Transactional
+	public void pmApprove() {
+		List<Task> tasks = taskService.createTaskQuery()
+				.taskCandidateGroup("projectManager").list();
+		logger.info("PM's tasks size is " + tasks.size());
+		for (Task task : tasks) {
+			logger.info("Task available: " + task.getName() + "--"
+					+ task.getDescription());
+			Map<String, Object> taskVariables = new HashMap<String, Object>();
+			taskVariables.put("vacationApprovedPM", "false");
+			taskVariables.put("managerMotivationPM", "go ahead!");
+			taskService.complete(task.getId(), taskVariables);
+		}
+	}
+
+	@Transactional
+	public void dmApprove() {
+		List<Task> tasks2 = taskService.createTaskQuery()
+				.taskCandidateGroup("departmentManager").list();
+		logger.info("DM's tasks size is " + tasks2.size());
+		for (Task task : tasks2) {
+			logger.info("Task available: " + task.getName() + "--"
+					+ task.getDescription());
+			Map<String, Object> taskVariables = new HashMap<String, Object>();
+			taskVariables.put("vacationApprovedDM", "true");
+			taskVariables.put("managerMotivationDM", "go ahead!");
+			taskService.complete(task.getId(), taskVariables);
+		}
+	}
+
+	public void waitTime(int n) {
+		try {
+			Thread.sleep(n * 1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 }

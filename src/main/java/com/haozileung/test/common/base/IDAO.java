@@ -7,6 +7,8 @@ package com.haozileung.test.common.base;
 
 import java.io.Serializable;
 
+import com.googlecode.genericdao.dao.hibernate.GenericDAO;
+
 /**
  * <p>
  * 类的简介说明
@@ -16,16 +18,5 @@ import java.io.Serializable;
  * @author lianghaopeng
  * @version V1.0
  */
-public interface IDAO<T, ID extends Serializable> {
-
-	public ID save(T t);
-
-	public void update(T t);
-
-	public T find(ID id);
-	
-	public void delete(T t);
-
-	public Class<T> getPOJOClass();
-
+public interface IDAO<T, ID extends Serializable> extends GenericDAO<T, ID> {
 }
