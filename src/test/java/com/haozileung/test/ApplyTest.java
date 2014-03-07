@@ -5,12 +5,18 @@
  */
 package com.haozileung.test;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.activiti.engine.HistoryService;
+import org.activiti.engine.IdentityService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
@@ -46,6 +52,9 @@ import com.haozileung.test.pojo.apply.Apply;
 @TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = false)
 public class ApplyTest {
 	private final Logger logger = LoggerFactory.getLogger(ApplyTest.class);
+
+	@Autowired
+	private IdentityService identityService;
 	@Autowired
 	private ApplyRepository applyRepository;
 
@@ -64,7 +73,23 @@ public class ApplyTest {
 	@Rule
 	public ActivitiRule activitiSpringRule;
 
+	@PersistenceContext
+	public EntityManager entityManager;
+
 	@Test
+	@Transactional
+	public void testJpa() {
+		Calendar c = Calendar.getInstance();
+		c.add(Calendar.SECOND, 20);
+		Apply a = new Apply(null, "Haozi", c.getTime(), "apply from test", 0,
+				"unknown", 0, "unknown", 1, 0);
+		applyRepository.save(a);
+		entityManager.persist(a);
+		assertNotNull(a.getApplyId());
+	}
+
+	@Test
+	// @Ignore
 	public void test() {
 		startProcess();
 		waitTime(5);
@@ -76,18 +101,12 @@ public class ApplyTest {
 
 	@Transactional
 	public void startProcess() {
-
-		Calendar c = Calendar.getInstance();
-		c.add(Calendar.SECOND, 10);
-		Apply a = new Apply(null, "Haozi", c.getTime(), "apply from test", 0,
-				"unknown", 0, "unknown", 1, 0);
-		applyRepository.save(a);
-
 		List<Apply> applies = applyRepository.findAll();
 		for (Apply apply : applies) {
 			if (apply.getStatus().equals(0)) {
 				Map<String, Object> variables = new HashMap<String, Object>();
 				variables.put("apply", apply);
+				identityService.setAuthenticatedUserId(apply.getApplier());
 				runtimeService.startProcessInstanceByKey("vacationRequest",
 						variables);
 			}
@@ -105,7 +124,7 @@ public class ApplyTest {
 			logger.info("Task available: " + task.getName() + "--"
 					+ task.getDescription());
 			Map<String, Object> taskVariables = new HashMap<String, Object>();
-			taskVariables.put("vacationApprovedPM", "false");
+			taskVariables.put("vacationApprovedPM", "true");
 			taskVariables.put("managerMotivationPM", "go ahead!");
 			taskService.complete(task.getId(), taskVariables);
 		}

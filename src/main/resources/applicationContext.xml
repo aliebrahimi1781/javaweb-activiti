@@ -16,15 +16,27 @@
 	<context:component-scan base-package="com.haozileung.test.service" />
 
 	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"></bean>
-	<!-- 应用数据库 <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean"> 
+	<!-- hibernate sessionFactory配置<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean"> 
 		<property name="dataSource" ref="dataSource" /> <property name="packagesToScan"> 
 		<list> <value>com.haozileung.test.pojo</value> </list> </property> </bean> -->
 	<!-- <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager"> 
 		<property name="sessionFactory" ref="sessionFactory" /> </bean> -->
-	<!-- 事务处理 -->
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan" value="com.haozileung.test.pojo" />
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="databasePlatform" value="org.hibernate.dialect.MySQLDialect" />
+				<!-- property name="showSql" value="true" /> <property name="generateDdl" 
+					value="true" / -->
+			</bean>
+		</property>
+	</bean>
 	<!-- JPA 配置 -->
 	<jpa:repositories base-package="com.haozileung.test.dao"
 		transaction-manager-ref="transactionManager" />
+	<!-- 事务处理 -->
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
 		<property name="entityManagerFactory" ref="entityManagerFactory" />
 		<property name="jpaDialect">
@@ -33,7 +45,6 @@
 	</bean>
 	<tx:advice id="txAdvice" transaction-manager="transactionManager">
 		<tx:attributes>
-			<!-- hibernate4必须配置为开启事务 否则 getCurrentSession()获取不到 -->
 			<tx:method name="find*" propagation="REQUIRED" read-only="true" />
 			<tx:method name="update*" propagation="REQUIRED" />
 			<tx:method name="delete*" propagation="REQUIRED" />
@@ -51,18 +62,7 @@
 		<aop:advisor pointcut-ref="baseBizMethods" advice-ref="txAdvice" />
 	</aop:config>
 	<context:annotation-config />
-	<bean id="entityManagerFactory"
-		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-		<property name="dataSource" ref="dataSource" />
-		<property name="packagesToScan" value="com.haozileung.test.pojo" />
-		<property name="jpaVendorAdapter">
-			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-				<property name="databasePlatform" value="org.hibernate.dialect.MySQLDialect" />
-				<property name="showSql" value="true" />
-				<property name="generateDdl" value="true" />
-			</bean>
-		</property>
-	</bean>
+
 	<!-- activiti配置 -->
 	<bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
 		<property name="dataSource" ref="dataSource" />
@@ -72,7 +72,7 @@
 		<property name="jpaEntityManagerFactory" ref="entityManagerFactory" />
 		<property name="jpaHandleTransaction" value="true" />
 		<property name="jpaCloseEntityManager" value="true" />
-		<property name="deploymentResources" value="classpath*:*.bpmn*" />
+		<property name="deploymentResources" value="classpath*:bpmn/*.bpmn*" />
 	</bean>
 	<bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">
 		<property name="processEngineConfiguration" ref="processEngineConfiguration" />
@@ -87,6 +87,10 @@
 		factory-method="getHistoryService" />
 	<bean id="managementService" factory-bean="processEngine"
 		factory-method="getManagementService" />
+	<bean id="identityService" factory-bean="processEngine"
+		factory-method="getIdentityService" />
+	<bean id="formService" factory-bean="processEngine"
+		factory-method="getFormService" />
 	<!-- 下面这个是测试必需 -->
 	<bean id="activitiRule" class="org.activiti.engine.test.ActivitiRule">
 		<property name="processEngine" ref="processEngine" />
