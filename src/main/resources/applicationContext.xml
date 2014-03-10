@@ -14,13 +14,26 @@
 	<!-- 开启注解 -->
 	<context:annotation-config />
 	<context:component-scan base-package="com.haozileung.test.service" />
-
+	<!-- 数据源配置 -->
 	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"></bean>
-	<!-- hibernate sessionFactory配置<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean"> 
-		<property name="dataSource" ref="dataSource" /> <property name="packagesToScan"> 
-		<list> <value>com.haozileung.test.pojo</value> </list> </property> </bean> -->
-	<!-- <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager"> 
-		<property name="sessionFactory" ref="sessionFactory" /> </bean> -->
+
+	<!-- hibernate sessionFactory配置 -->
+	<!-- 
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan">
+			<list>
+				<value>com.haozileung.test.pojo</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	 -->
+	<!-- jpa entityManagerFactory配置 -->
 	<bean id="entityManagerFactory"
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="dataSource" ref="dataSource" />

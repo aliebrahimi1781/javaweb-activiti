@@ -1,5 +1,7 @@
 package com.haozileung.test.dao;
 
+import java.util.List;
+
 import org.springframework.data.repository.CrudRepository;
 
 import com.haozileung.test.pojo.apply.Apply;
@@ -15,5 +17,11 @@ import com.haozileung.test.pojo.apply.Apply;
  * @version V1.0
  */
 public interface ApplyRepository extends CrudRepository<Apply, Integer> {
-	public Apply findOneByStatus(Integer status);
+	/**
+	 * 按状态查找
+	 * 
+	 * @param status
+	 * @return
+	 */
+	public List<Apply> findOneByStatus(Integer status);
 }

@@ -5,7 +5,8 @@
  */
 package com.haozileung.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -22,7 +23,6 @@ import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.test.ActivitiRule;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,7 +50,7 @@ import com.haozileung.test.pojo.apply.Apply;
 @RunWith(SpringJUnit4ClassRunner.class)
 // 配置spring配置文件位置
 @ContextConfiguration(locations = { "classpath*:applicationContext*.xml" })
-@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
+@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = false)
 public class ApplyTest {
 	private final Logger logger = LoggerFactory.getLogger(ApplyTest.class);
 
@@ -87,14 +87,14 @@ public class ApplyTest {
 		applyRepository.save(a);
 		entityManager.persist(a);
 		assertNotNull(a.getApplyId());
-		Apply a2 = applyRepository.findOneByStatus(0);
-		
+		List<Apply> a2 = applyRepository.findOneByStatus(0);
+
 		assertNotNull(a2);
-		assertEquals(a.getApplyId(), a2.getApplyId());
+		assertEquals(a.getApplyId(), a2.get(0).getApplyId());
 	}
 
 	@Test
-	@Ignore
+	//@Ignore
 	public void test() {
 		startProcess();
 		waitTime(5);
