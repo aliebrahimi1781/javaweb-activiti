@@ -1,6 +1,6 @@
 package com.haozileung.test.dao;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 
 import com.haozileung.test.pojo.apply.Apply;
 
@@ -14,6 +14,6 @@ import com.haozileung.test.pojo.apply.Apply;
  * @author lianghaopeng
  * @version V1.0
  */
-public interface ApplyRepository extends JpaRepository<Apply, Integer> {
-
+public interface ApplyRepository extends CrudRepository<Apply, Integer> {
+	public Apply findOneByStatus(Integer status);
 }

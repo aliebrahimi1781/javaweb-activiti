@@ -5,7 +5,7 @@
  */
 package com.haozileung.test;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -22,6 +22,7 @@ import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.test.ActivitiRule;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,7 +50,7 @@ import com.haozileung.test.pojo.apply.Apply;
 @RunWith(SpringJUnit4ClassRunner.class)
 // 配置spring配置文件位置
 @ContextConfiguration(locations = { "classpath*:applicationContext*.xml" })
-@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = false)
+@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
 public class ApplyTest {
 	private final Logger logger = LoggerFactory.getLogger(ApplyTest.class);
 
@@ -86,10 +87,14 @@ public class ApplyTest {
 		applyRepository.save(a);
 		entityManager.persist(a);
 		assertNotNull(a.getApplyId());
+		Apply a2 = applyRepository.findOneByStatus(0);
+		
+		assertNotNull(a2);
+		assertEquals(a.getApplyId(), a2.getApplyId());
 	}
 
 	@Test
-	// @Ignore
+	@Ignore
 	public void test() {
 		startProcess();
 		waitTime(5);
@@ -101,7 +106,7 @@ public class ApplyTest {
 
 	@Transactional
 	public void startProcess() {
-		List<Apply> applies = applyRepository.findAll();
+		Iterable<Apply> applies = applyRepository.findAll();
 		for (Apply apply : applies) {
 			if (apply.getStatus().equals(0)) {
 				Map<String, Object> variables = new HashMap<String, Object>();
