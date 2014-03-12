@@ -1,6 +1,6 @@
 <module rename-to="test">
 	<inherits name="com.smartgwt.SmartGwt" />
-	<inherits name="com.smartclient.theme.blackops.BlackOps" />
+	<inherits name="com.smartclient.theme.enterprise.Enterprise" />
 	<entry-point class="com.haozileung.test.client.Index" />
 	<source path='client' />
 	<source path='shared' />

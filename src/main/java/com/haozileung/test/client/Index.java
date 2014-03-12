@@ -6,6 +6,7 @@
 package com.haozileung.test.client;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.tab.TabSet;
 
@@ -27,6 +28,7 @@ public class Index implements EntryPoint {
 	 */
 	@Override
 	public void onModuleLoad() {
+		SC.say("测试！");
 		TabSet ts = new TabSet();
 		ts.setWidth100();
 		ts.setHeight100();
