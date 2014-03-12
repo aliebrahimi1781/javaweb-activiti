@@ -102,7 +102,7 @@
 		factory-method="getIdentityService" />
 	<bean id="formService" factory-bean="processEngine"
 		factory-method="getFormService" />
-	<!-- 下面这个是测试必需 -->
+	<!-- 下面这个是测试用 -->
 	<bean id="activitiRule" class="org.activiti.engine.test.ActivitiRule">
 		<property name="processEngine" ref="processEngine" />
 	</bean>

@@ -1,0 +1,9 @@
+<module rename-to="test">
+	<inherits name="com.smartgwt.SmartGwtNoScript" />
+	<add-linker name="xsiframe" />
+	<set-configuration-property name="devModeRedirectEnabled"
+		value="true" />
+	<entry-point class="com.haozileung.test.Index" />
+	<source path='client' />
+	<source path='shared' />
+</module>
