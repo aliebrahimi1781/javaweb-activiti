@@ -179,7 +179,7 @@
 					<copyWebapp>true</copyWebapp>
 					<extraJvmArgs>-Xms512m -Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=256m</extraJvmArgs>
 					<modules>
-						<module>com.haozileung.test.index</module>
+						<module>com.haozileung.test.index_superdev</module>
 					</modules>
 					<runTarget>index.html</runTarget>
 				</configuration>

@@ -1,5 +1,6 @@
 <module rename-to="test">
 	<inherits name="com.smartgwt.SmartGwtNoScript" />
+	<inherits name="com.smartclient.theme.blackops.BlackOpsResources" />
 	<add-linker name="xsiframe" />
 	<set-configuration-property name="devModeRedirectEnabled"
 		value="true" />
