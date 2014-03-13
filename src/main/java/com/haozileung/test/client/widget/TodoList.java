@@ -1,5 +1,8 @@
 package com.haozileung.test.client.widget;
 
+import com.haozileung.test.client.ds.TaskDataSource;
+import com.smartgwt.client.widgets.grid.ListGrid;
+
 /**
  * 
  * <p>
@@ -10,6 +13,9 @@ package com.haozileung.test.client.widget;
  * @author lianghaopeng
  * @version V1.0
  */
-public class TodoList {
+public class TodoList extends ListGrid {
+	public TodoList() {
+		setDataSource(TaskDataSource.getInstance());
+	}
 
 }

@@ -79,6 +79,6 @@ public class ApplyServiceImpl implements IApplyService {
 
 	@Override
 	public Apply saveApply(Apply apply) {
-		return apply;
+		return applyRepository.save(apply);
 	}
 }

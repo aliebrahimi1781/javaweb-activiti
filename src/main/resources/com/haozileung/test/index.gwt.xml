@@ -1,6 +1,9 @@
 <module rename-to="test">
 	<inherits name="com.smartgwt.SmartGwt" />
 	<inherits name="com.smartclient.theme.enterprise.Enterprise" />
+	<extend-property name="locale" values="zh" />
+	<extend-property name="locale" values="en" />
+	<set-property-fallback name="locale" value="zh" />
 	<entry-point class="com.haozileung.test.client.Index" />
 	<source path='client' />
 	<source path='shared' />
