@@ -9,6 +9,9 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 import com.haozileung.test.common.base.IEntity;
 
 /**
@@ -20,63 +23,74 @@ import com.haozileung.test.common.base.IEntity;
  * @author lianghaopeng
  * @version V1.0
  */
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class Response<T extends IEntity> implements Serializable {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -7113490943820210225L;
-	private Integer status;
-	private Integer startRow;
-	private Integer endRow;
-	private Integer totalRows;
-	private List<T> data;
-	private Map<String, ErrorMessage> errors;
+	private ResponseField<T> response;
 
+	public Response() {
+		response = new ResponseField<T>();
+	}
+
+	public ResponseField<T> getResponse() {
+		return response;
+	}
+
+	public void setResponse(ResponseField<T> response) {
+		this.response = response;
+	}
+
+	@JsonIgnore
 	public Integer getStatus() {
-		return status;
+		return response.getStatus();
 	}
 
 	public void setStatus(Integer status) {
-		this.status = status;
+		response.setStatus(status);
 	}
 
+	@JsonIgnore
 	public Integer getStartRow() {
-		return startRow;
+		return response.getStartRow();
 	}
 
 	public void setStartRow(Integer startRow) {
-		this.startRow = startRow;
+		response.setStartRow(startRow);
 	}
 
+	@JsonIgnore
 	public Integer getEndRow() {
-		return endRow;
+		return response.getEndRow();
 	}
 
 	public void setEndRow(Integer endRow) {
-		this.endRow = endRow;
+		response.setEndRow(endRow);
 	}
 
+	@JsonIgnore
 	public Integer getTotalRows() {
-		return totalRows;
+		return response.getTotalRows();
 	}
 
 	public void setTotalRows(Integer totalRows) {
-		this.totalRows = totalRows;
+		response.setTotalRows(totalRows);
 	}
 
+	@JsonIgnore
 	public List<T> getData() {
-		return data;
+		return response.getData();
 	}
 
 	public void setData(List<T> data) {
-		this.data = data;
+		response.setData(data);
 	}
 
+	@JsonIgnore
 	public Map<String, ErrorMessage> getErrors() {
-		return errors;
+		return response.getErrors();
 	}
 
 	public void setErrors(Map<String, ErrorMessage> errors) {
-		this.errors = errors;
+		response.setErrors(errors);
 	}
 }

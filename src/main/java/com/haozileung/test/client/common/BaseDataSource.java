@@ -10,7 +10,6 @@ import com.smartgwt.client.data.OperationBinding;
 import com.smartgwt.client.data.RestDataSource;
 import com.smartgwt.client.types.DSDataFormat;
 import com.smartgwt.client.types.DSOperationType;
-import com.smartgwt.client.types.DSProtocol;
 
 /**
  * <p>

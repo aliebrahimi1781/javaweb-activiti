@@ -1,7 +1,10 @@
 package com.haozileung.test.client.widget;
 
 import com.haozileung.test.client.ds.TaskDataSource;
+import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.events.RecordDoubleClickEvent;
+import com.smartgwt.client.widgets.grid.events.RecordDoubleClickHandler;
 
 /**
  * 
@@ -14,8 +17,20 @@ import com.smartgwt.client.widgets.grid.ListGrid;
  * @version V1.0
  */
 public class TodoList extends ListGrid {
-	public TodoList() {
+	public TodoList(final Integer type) {
 		setDataSource(TaskDataSource.getInstance());
-	}
+		setAutoFetchData(true);
+		addRecordDoubleClickHandler(new RecordDoubleClickHandler() {
 
+			@Override
+			public void onRecordDoubleClick(RecordDoubleClickEvent event) {
+				Window formWin = new Window();
+				formWin.setHeight("40%");
+				formWin.setWidth("30%");
+				ApproveForm form = new ApproveForm(type);
+				formWin.addMember(form);
+				formWin.show();
+			}
+		});
+	}
 }

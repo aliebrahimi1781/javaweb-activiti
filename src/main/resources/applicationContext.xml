@@ -13,12 +13,13 @@
     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
 	<!-- 开启注解 -->
 	<context:annotation-config />
-	<context:component-scan base-package="com.haozileung.test.service" />
+	<context:component-scan
+		base-package="com.haozileung.test.service,com.haozileung.test.dao" />
 	<!-- 数据源配置 -->
-	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"></bean>
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close"></bean>
 
 	<!-- hibernate sessionFactory配置 -->
-	<!-- 
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
@@ -32,28 +33,18 @@
 		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
-	 -->
-	<!-- jpa entityManagerFactory配置 -->
-	<bean id="entityManagerFactory"
-		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-		<property name="dataSource" ref="dataSource" />
-		<property name="packagesToScan" value="com.haozileung.test.pojo" />
-		<property name="jpaVendorAdapter">
-			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-				<property name="databasePlatform" value="org.hibernate.dialect.MySQLDialect" />
-			</bean>
-		</property>
-	</bean>
-	<!-- JPA 配置 -->
-	<jpa:repositories base-package="com.haozileung.test.dao"
-		transaction-manager-ref="transactionManager" />
-	<!-- 事务处理 -->
-	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-		<property name="entityManagerFactory" ref="entityManagerFactory" />
-		<property name="jpaDialect">
-			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaDialect"></bean>
-		</property>
-	</bean>
+	<!-- jpa entityManagerFactory配置 <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"> 
+		<property name="dataSource" ref="dataSource" /> <property name="packagesToScan" 
+		value="com.haozileung.test.pojo" /> <property name="jpaVendorAdapter"> <bean 
+		class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"> <property 
+		name="databasePlatform" value="org.hibernate.dialect.MySQLDialect" /> </bean> 
+		</property> </bean> -->
+	<!-- JPA 配置 <jpa:repositories base-package="com.haozileung.test.dao" transaction-manager-ref="transactionManager" 
+		/> -->
+	<!-- 事务处理 <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"> 
+		<property name="entityManagerFactory" ref="entityManagerFactory" /> <property 
+		name="jpaDialect"> <bean class="org.springframework.orm.jpa.vendor.HibernateJpaDialect"></bean> 
+		</property> </bean> -->
 	<tx:advice id="txAdvice" transaction-manager="transactionManager">
 		<tx:attributes>
 			<tx:method name="find*" propagation="REQUIRED" read-only="true" />
@@ -72,7 +63,6 @@
 			expression="execution(public * com.haozileung.test.service.*.*(..))" />
 		<aop:advisor pointcut-ref="baseBizMethods" advice-ref="txAdvice" />
 	</aop:config>
-	<context:annotation-config />
 
 	<!-- activiti配置 -->
 	<bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
@@ -80,9 +70,9 @@
 		<property name="transactionManager" ref="transactionManager"></property>
 		<property name="databaseSchemaUpdate" value="true" />
 		<property name="jobExecutorActivate" value="true" />
-		<property name="jpaEntityManagerFactory" ref="entityManagerFactory" />
-		<property name="jpaHandleTransaction" value="true" />
-		<property name="jpaCloseEntityManager" value="true" />
+		<!-- <property name="jpaEntityManagerFactory" ref="entityManagerFactory" 
+			/> <property name="jpaHandleTransaction" value="true" /> <property name="jpaCloseEntityManager" 
+			value="true" /> -->
 		<property name="deploymentResources" value="classpath*:bpmn/*.bpmn*" />
 	</bean>
 	<bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">
@@ -102,7 +92,6 @@
 		factory-method="getIdentityService" />
 	<bean id="formService" factory-bean="processEngine"
 		factory-method="getFormService" />
-	<!-- 下面这个是测试用 -->
 	<bean id="activitiRule" class="org.activiti.engine.test.ActivitiRule">
 		<property name="processEngine" ref="processEngine" />
 	</bean>

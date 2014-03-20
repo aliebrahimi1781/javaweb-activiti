@@ -7,6 +7,8 @@ package com.haozileung.test.dto;
 
 import java.io.Serializable;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 /**
  * <p>
  * 类的简介说明
@@ -16,6 +18,7 @@ import java.io.Serializable;
  * @author lianghaopeng
  * @version V1.0
  */
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ErrorMessage implements Serializable {
 
 	/**

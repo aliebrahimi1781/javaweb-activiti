@@ -15,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -32,6 +33,7 @@ import com.haozileung.test.common.base.IEntity;
 @Entity(name = "t_apply")
 @Access(AccessType.FIELD)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL) 
 public class Apply implements IEntity {
 
 	/**

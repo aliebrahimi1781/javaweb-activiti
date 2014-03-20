@@ -5,7 +5,6 @@
  */
 package com.haozileung.test;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.Calendar;
@@ -34,7 +33,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.haozileung.test.dao.ApplyRepository;
+import com.haozileung.test.dao.IApplyDAO;
 import com.haozileung.test.pojo.apply.Apply;
 
 /**
@@ -57,7 +56,7 @@ public class ApplyTest {
 	@Autowired
 	private IdentityService identityService;
 	@Autowired
-	private ApplyRepository applyRepository;
+	private IApplyDAO applyRepository;
 
 	@Autowired
 	private RuntimeService runtimeService;
@@ -87,14 +86,10 @@ public class ApplyTest {
 		applyRepository.save(a);
 		entityManager.persist(a);
 		assertNotNull(a.getApplyId());
-		List<Apply> a2 = applyRepository.findOneByStatus(0);
-
-		assertNotNull(a2);
-		assertEquals(a.getApplyId(), a2.get(0).getApplyId());
 	}
 
 	@Test
-	//@Ignore
+	// @Ignore
 	public void test() {
 		startProcess();
 		waitTime(5);

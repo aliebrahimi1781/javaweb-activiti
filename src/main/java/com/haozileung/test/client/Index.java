@@ -42,8 +42,8 @@ public class Index implements EntryPoint {
 
 		ApplyForm form = new ApplyForm();
 		tab1.setPane(form);
-		TodoList todoList = new TodoList();
-		TodoList todoList2 = new TodoList();
+		TodoList todoList = new TodoList(1);
+		TodoList todoList2 = new TodoList(2);
 		tab2.setPane(todoList);
 		tab3.setPane(todoList2);
 		ts.addTab(tab1);

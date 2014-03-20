@@ -5,13 +5,11 @@
  */
 package com.haozileung.test.client.widget;
 
-import com.haozileung.test.client.ds.ApplyDataSource;
+import com.haozileung.test.client.ds.TaskDataSource;
 import com.smartgwt.client.widgets.form.DynamicForm;
-import com.smartgwt.client.widgets.form.fields.CanvasItem;
 import com.smartgwt.client.widgets.form.fields.HiddenItem;
 import com.smartgwt.client.widgets.form.fields.ResetItem;
 import com.smartgwt.client.widgets.form.fields.SubmitItem;
-import com.smartgwt.client.widgets.layout.HLayout;
 
 /**
  * <p>
@@ -24,7 +22,7 @@ import com.smartgwt.client.widgets.layout.HLayout;
  */
 public class ApplyForm extends DynamicForm {
 	public ApplyForm() {
-		setDataSource(ApplyDataSource.getInstance());
+		setDataSource(TaskDataSource.getInstance());
 		setUseAllDataSourceFields(true);
 		HiddenItem applyId = new HiddenItem("applyId");
 		HiddenItem result1 = new HiddenItem("result1");

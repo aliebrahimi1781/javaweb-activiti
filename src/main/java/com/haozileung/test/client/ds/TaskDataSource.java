@@ -8,7 +8,6 @@ package com.haozileung.test.client.ds;
 import java.util.LinkedHashMap;
 
 import com.haozileung.test.client.common.BaseDataSource;
-import com.smartgwt.client.data.RestDataSource;
 import com.smartgwt.client.data.fields.DataSourceDateField;
 import com.smartgwt.client.data.fields.DataSourceFloatField;
 import com.smartgwt.client.data.fields.DataSourceIntegerField;
@@ -77,7 +76,11 @@ public class TaskDataSource extends BaseDataSource {
 		this.setFields(applyId, applier, applyDate, numberOfDays, content,
 				result1, result2, comment1, comment2, status);
 		this.setDataFormat(DSDataFormat.JSON);
-		this.setDataURL("apply");
+		//this.setDataURL("apply");
+		this.setFetchDataURL("apply/fetch");
+		this.setUpdateDataURL("apply/update");
+		this.setAddDataURL("apply/add");
+		this.setRemoveDataURL("apply/delete");
 		this.setClientOnly(false);
 	}
 }

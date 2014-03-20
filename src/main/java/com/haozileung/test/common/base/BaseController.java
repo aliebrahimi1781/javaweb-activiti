@@ -5,10 +5,12 @@
  */
 package com.haozileung.test.common.base;
 
-import java.io.Serializable;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.haozileung.test.dto.Response;
 
 /**
  * <p>
@@ -19,7 +21,8 @@ import org.slf4j.LoggerFactory;
  * @author lianghaopeng
  * @version V1.0
  */
-public abstract class BaseController implements Serializable {
+public abstract class BaseController<T extends IEntity> implements
+		IController<T> {
 
 	/**
 	 * 
@@ -27,5 +30,11 @@ public abstract class BaseController implements Serializable {
 	private static final long serialVersionUID = -5567430967270107013L;
 	protected Logger logger = LoggerFactory.getLogger(BaseController.class
 			.getName());
+
+	@ResponseBody
+	@RequestMapping(value = "")
+	protected Response<T> handle() {
+		return null;
+	}
 
 }
