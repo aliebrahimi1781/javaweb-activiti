@@ -10,6 +10,8 @@ import com.haozileung.test.client.widget.ApplyForm;
 import com.haozileung.test.client.widget.TodoList;
 import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.tab.TabSet;
+import com.smartgwt.client.widgets.tab.events.TabSelectedEvent;
+import com.smartgwt.client.widgets.tab.events.TabSelectedHandler;
 
 /**
  * <p>
@@ -51,6 +53,14 @@ public class Index implements EntryPoint {
 		ts.addTab(tab3);
 		ts.addTab(tab4);
 		ts.addTab(tab5);
+		ts.addTabSelectedHandler(new TabSelectedHandler() {
+
+			@Override
+			public void onTabSelected(TabSelectedEvent event) {
+				TodoList tl = (TodoList) event.getTabPane();
+				tl.invalidateCache();
+			}
+		});
 
 		ts.show();
 	}

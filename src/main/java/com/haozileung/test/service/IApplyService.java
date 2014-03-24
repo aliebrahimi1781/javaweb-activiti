@@ -5,6 +5,9 @@
  */
 package com.haozileung.test.service;
 
+import java.util.List;
+import java.util.Map;
+
 import com.haozileung.test.common.base.IService;
 import com.haozileung.test.pojo.apply.Apply;
 
@@ -18,5 +21,33 @@ import com.haozileung.test.pojo.apply.Apply;
  * @version V1.0
  */
 public interface IApplyService extends IService {
+	/**
+	 * 开始流程
+	 * 
+	 * @param apply
+	 * @return
+	 */
 	public boolean startFlow(Apply apply);
+
+	/**
+	 * 查询列表
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	public List<Apply> getToDoApplyList(String userId);
+
+	/**
+	 * 查询正在进行的流程
+	 * 
+	 * @return
+	 */
+	public List<Apply> getRunningApplyList();
+
+	/**
+	 * 查询已经结束的流程
+	 * 
+	 * @return
+	 */
+	public List<Apply> getFinishedApplyList();
 }

@@ -204,12 +204,14 @@
 						<module>com.haozileung.test.index</module>
 					</modules>
 					<runTarget>index.html</runTarget>
+					<hostedWebapp>${webappDirectory}</hostedWebapp>
 				</configuration>
 				<executions>
 					<execution>
 						<goals>
 							<goal>compile</goal>
 							<goal>generateAsync</goal>
+							<!--goal>i18n</goal-->
 							<goal>test</goal>
 						</goals>
 					</execution>

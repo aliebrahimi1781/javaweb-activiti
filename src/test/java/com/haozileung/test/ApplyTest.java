@@ -5,8 +5,6 @@
  */
 package com.haozileung.test;
 
-import static org.junit.Assert.assertNotNull;
-
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -81,11 +79,11 @@ public class ApplyTest {
 	public void testJpa() {
 		Calendar c = Calendar.getInstance();
 		c.add(Calendar.SECOND, 20);
-		Apply a = new Apply(null, "Haozi", c.getTime(), "apply from test", 0,
-				"unknown", 0, "unknown", 1, 0);
-		applyRepository.save(a);
-		entityManager.persist(a);
-		assertNotNull(a.getApplyId());
+		// Apply a = new Apply(null, "Haozi", c.getTime(), "apply from test", 0,
+		// "unknown", 0, "unknown", 1, 0);
+		// applyRepository.save(a);
+		// entityManager.persist(a);
+		// assertNotNull(a.getApplyId());
 	}
 
 	@Test

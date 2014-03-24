@@ -8,7 +8,7 @@ package com.haozileung.test.client.ds;
 import java.util.LinkedHashMap;
 
 import com.haozileung.test.client.common.BaseDataSource;
-import com.smartgwt.client.data.fields.DataSourceDateField;
+import com.smartgwt.client.data.fields.DataSourceDateTimeField;
 import com.smartgwt.client.data.fields.DataSourceFloatField;
 import com.smartgwt.client.data.fields.DataSourceIntegerField;
 import com.smartgwt.client.data.fields.DataSourceTextField;
@@ -43,7 +43,7 @@ public class TaskDataSource extends BaseDataSource {
 		DataSourceTextField applier = new DataSourceTextField("applier", "申请人",
 				25);
 		applier.setRequired(true);
-		DataSourceDateField applyDate = new DataSourceDateField("applyDate",
+		DataSourceDateTimeField applyDate = new DataSourceDateTimeField("applyDate",
 				"申请时间");
 		applyDate.setRequired(true);
 		DataSourceTextField content = new DataSourceTextField("content",

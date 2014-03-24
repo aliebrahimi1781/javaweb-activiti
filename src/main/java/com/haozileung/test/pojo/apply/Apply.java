@@ -14,12 +14,15 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.haozileung.test.common.base.IEntity;
+import com.haozileung.test.common.utils.JsonDateSerializer;
 
 /**
  * <p>
@@ -33,7 +36,7 @@ import com.haozileung.test.common.base.IEntity;
 @Entity(name = "t_apply")
 @Access(AccessType.FIELD)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL) 
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class Apply implements IEntity {
 
 	/**
@@ -48,6 +51,8 @@ public class Apply implements IEntity {
 	@Column(name = "applier")
 	private String applier;
 	@Column(name = "applyDate")
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@JsonSerialize(using = JsonDateSerializer.class)
 	private Date applyDate;
 	@Column(name = "content")
 	private String content;
@@ -63,6 +68,16 @@ public class Apply implements IEntity {
 	private Integer numberOfDays;
 	@Column(name = "status")
 	private Integer status;
+	@Transient
+	private String processInstanceId;
+	@Transient
+	private String taskId;
+
+	/**
+	 * 
+	 */
+	public Apply() {
+	}
 
 	public Integer getApplyId() {
 		return applyId;
@@ -144,37 +159,19 @@ public class Apply implements IEntity {
 		this.status = status;
 	}
 
-	/**
-	 * @param applyId
-	 * @param applier
-	 * @param applyDate
-	 * @param content
-	 * @param result1
-	 * @param comment1
-	 * @param result2
-	 * @param comment2
-	 * @param numberOfDays
-	 * @param status
-	 */
-	public Apply(Integer applyId, String applier, Date applyDate,
-			String content, Integer result1, String comment1, Integer result2,
-			String comment2, Integer numberOfDays, Integer status) {
-		super();
-		this.applyId = applyId;
-		this.applier = applier;
-		this.applyDate = applyDate;
-		this.content = content;
-		this.result1 = result1;
-		this.comment1 = comment1;
-		this.result2 = result2;
-		this.comment2 = comment2;
-		this.numberOfDays = numberOfDays;
-		this.status = status;
+	public String getProcessInstanceId() {
+		return processInstanceId;
 	}
 
-	/**
-	 * 
-	 */
-	public Apply() {
+	public void setProcessInstanceId(String processInstanceId) {
+		this.processInstanceId = processInstanceId;
+	}
+
+	public String getTaskId() {
+		return taskId;
+	}
+
+	public void setTaskId(String taskId) {
+		this.taskId = taskId;
 	}
 }

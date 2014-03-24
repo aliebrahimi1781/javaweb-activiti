@@ -17,7 +17,7 @@
 
 	<!-- 用默认servlet处理静态资源 -->
 	<mvc:default-servlet-handler />
-
+	
 	<!-- 完成请求和注解POJO的映射 -->
 	<bean
 		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
