@@ -44,17 +44,41 @@ public class ApplyController {// extends BaseController<Apply> {
 		response.setStatus(-1);
 		return response;
 	}
+
 	@RequestMapping("/fetch")
 	@ResponseBody
-	public Response<Apply> getApplyList(String userId) {
-		// projectManager departManager
+	public Response<Apply> getApplyList(String userId, String type) {
 		Response<Apply> response = new Response<Apply>();
 		if (userId != null) {
 			List<Apply> appliyList = applyService.getToDoApplyList(userId);
 			response.setData(appliyList);
 			response.setStatus(0);
 		}
+		if (type != null) {
+			List<Apply> appliyList = null;
+			if (type.equals("running")) {
+				appliyList = applyService.getRunningApplyList();
+			}
+			if (type.equals("finished")) {
+				appliyList = applyService.getFinishedApplyList();
+			}
+			response.setData(appliyList);
+			response.setStatus(0);
+		}
 
+		return response;
+	}
+
+	@RequestMapping("/update")
+	@ResponseBody
+	public Response<Apply> updateApply(Apply apply, String userId) {
+
+		Response<Apply> response = new Response<Apply>();
+		if (applyService.updateApply(apply, userId)) {
+			response.setStatus(0);
+		} else {
+			response.setStatus(-1);
+		}
 		return response;
 	}
 }

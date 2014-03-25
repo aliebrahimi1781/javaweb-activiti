@@ -6,7 +6,6 @@
 package com.haozileung.test.service;
 
 import java.util.List;
-import java.util.Map;
 
 import com.haozileung.test.common.base.IService;
 import com.haozileung.test.pojo.apply.Apply;
@@ -50,4 +49,13 @@ public interface IApplyService extends IService {
 	 * @return
 	 */
 	public List<Apply> getFinishedApplyList();
+
+	/**
+	 * 签收或完成任务
+	 * 
+	 * @param apply
+	 * @param userId
+	 * @return
+	 */
+	public boolean updateApply(Apply apply, String userId);
 }

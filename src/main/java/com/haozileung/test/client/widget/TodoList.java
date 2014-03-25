@@ -2,9 +2,15 @@ package com.haozileung.test.client.widget;
 
 import com.haozileung.test.client.ds.TaskDataSource;
 import com.smartgwt.client.data.Criteria;
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.IButton;
 import com.smartgwt.client.widgets.Window;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.RecordDoubleClickEvent;
 import com.smartgwt.client.widgets.grid.events.RecordDoubleClickHandler;
 
@@ -19,6 +25,7 @@ import com.smartgwt.client.widgets.grid.events.RecordDoubleClickHandler;
  * @version V1.0
  */
 public class TodoList extends ListGrid {
+
 	public TodoList(final Integer type) {
 		setDataSource(TaskDataSource.getInstance());
 		setAutoFetchData(true);
@@ -26,20 +33,39 @@ public class TodoList extends ListGrid {
 		setUseAllDataSourceFields(true);
 		if (type.equals(1)) {
 			c.setAttribute("userId", "projectManager");
-			ListGridField result = new ListGridField("result2");
-			ListGridField comment = new ListGridField("comment2");
-			result.setHidden(true);
-			comment.setHidden(true);
-			setFields(result, comment);
+
 		}
 		if (type.equals(2)) {
 			c.setAttribute("userId", "departmentManager");
-			ListGridField result = new ListGridField("result1");
-			ListGridField comment = new ListGridField("comment1");
-			result.setHidden(true);
-			comment.setHidden(true);
-			setFields(result, comment);
+
 		}
+		ListGridField result1 = new ListGridField("result1");
+		ListGridField comment1 = new ListGridField("comment1");
+		result1.setHidden(true);
+		comment1.setHidden(true);
+		ListGridField result2 = new ListGridField("result2");
+		ListGridField comment2 = new ListGridField("comment2");
+		result2.setHidden(true);
+		comment2.setHidden(true);
+		ListGridField applier = new ListGridField("applier");
+		applier.setAlign(Alignment.CENTER);
+		applier.setWidth("20%");
+		ListGridField applyDate = new ListGridField("applyDate");
+		applyDate.setAlign(Alignment.CENTER);
+		applyDate.setWidth("20%");
+		ListGridField numberOfDays = new ListGridField("numberOfDays");
+		numberOfDays.setAlign(Alignment.CENTER);
+		numberOfDays.setWidth("20%");
+		ListGridField content = new ListGridField("content");
+		content.setAlign(Alignment.CENTER);
+		content.setWidth("20%");
+		ListGridField status = new ListGridField("status");
+		status.setAlign(Alignment.CENTER);
+		status.setWidth("10%");
+		ListGridField btnField = new ListGridField("isClaim", "签收状态");
+		btnField.setWidth("10%");
+		setFields(applier, applyDate, numberOfDays, content, result1, status,
+				comment1, result2, comment2, btnField);
 		setInitialCriteria(c);
 		addRecordDoubleClickHandler(new RecordDoubleClickHandler() {
 
@@ -50,6 +76,7 @@ public class TodoList extends ListGrid {
 				formWin.setHeight("320");
 				formWin.setWidth("300");
 				ApproveForm form = new ApproveForm(type);
+				form.setMargin(10);
 				form.editRecord(event.getRecord());
 				formWin.addItem(form);
 				formWin.setIsModal(true);
@@ -58,5 +85,34 @@ public class TodoList extends ListGrid {
 				formWin.show();
 			}
 		});
+		setShowRecordComponents(true);
+		setShowRecordComponentsByCell(true);
+	}
+
+	@Override
+	protected Canvas createRecordComponent(final ListGridRecord record,
+			Integer colNum) {
+		final TodoList list = this;
+		if (this.getFieldName(colNum).equals("isClaim")) {
+			IButton btn = new IButton();
+			if (record.getAttributeAsInt("isClaim").equals(1)) {
+				btn.setTitle("已签收");
+			}
+			if (record.getAttributeAsInt("isClaim").equals(0)) {
+				btn.setTitle("未签收");
+				btn.addClickHandler(new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						record.setAttribute("isClaim", 1);
+						list.updateData(record);
+					}
+				});
+			}
+
+			return btn;
+		} else {
+			return super.createRecordComponent(record, colNum);
+		}
 	}
 }

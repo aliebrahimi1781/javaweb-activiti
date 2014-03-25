@@ -7,7 +7,9 @@ package com.haozileung.test.client;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.haozileung.test.client.widget.ApplyForm;
+import com.haozileung.test.client.widget.TaskList;
 import com.haozileung.test.client.widget.TodoList;
+import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.tab.TabSet;
 import com.smartgwt.client.widgets.tab.events.TabSelectedEvent;
@@ -46,8 +48,13 @@ public class Index implements EntryPoint {
 		tab1.setPane(form);
 		TodoList todoList = new TodoList(1);
 		TodoList todoList2 = new TodoList(2);
+		TaskList taskList = new TaskList(1);
+		TaskList taskList2 = new TaskList(2);
+
 		tab2.setPane(todoList);
 		tab3.setPane(todoList2);
+		tab4.setPane(taskList);
+		tab5.setPane(taskList2);
 		ts.addTab(tab1);
 		ts.addTab(tab2);
 		ts.addTab(tab3);
@@ -57,7 +64,7 @@ public class Index implements EntryPoint {
 
 			@Override
 			public void onTabSelected(TabSelectedEvent event) {
-				TodoList tl = (TodoList) event.getTabPane();
+				ListGrid tl = (ListGrid) event.getTabPane();
 				tl.invalidateCache();
 			}
 		});

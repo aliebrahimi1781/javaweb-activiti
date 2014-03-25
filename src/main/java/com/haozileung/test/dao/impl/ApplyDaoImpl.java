@@ -20,7 +20,7 @@ import com.haozileung.test.pojo.apply.Apply;
  * @author lianghaopeng
  * @version V1.0
  */
-@Repository
+@Repository("ApplyDao")
 public class ApplyDaoImpl extends AbstractDAOImpl<Apply, Integer> implements
 		IApplyDAO {
 }

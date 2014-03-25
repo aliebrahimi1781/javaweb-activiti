@@ -8,7 +8,7 @@ package com.haozileung.test.client.ds;
 import java.util.LinkedHashMap;
 
 import com.haozileung.test.client.common.BaseDataSource;
-import com.smartgwt.client.data.fields.DataSourceDateTimeField;
+import com.smartgwt.client.data.fields.DataSourceDateField;
 import com.smartgwt.client.data.fields.DataSourceFloatField;
 import com.smartgwt.client.data.fields.DataSourceIntegerField;
 import com.smartgwt.client.data.fields.DataSourceTextField;
@@ -43,8 +43,9 @@ public class TaskDataSource extends BaseDataSource {
 		DataSourceTextField applier = new DataSourceTextField("applier", "申请人",
 				25);
 		applier.setRequired(true);
-		DataSourceDateTimeField applyDate = new DataSourceDateTimeField("applyDate",
+		DataSourceDateField applyDate = new DataSourceDateField("applyDate",
 				"申请时间");
+		// applyDate.setDateFormatter(DateDisplayFormat.valueOf("yyyy-MM-dd"));
 		applyDate.setRequired(true);
 		DataSourceTextField content = new DataSourceTextField("content",
 				"申请内容", 1000);
@@ -73,10 +74,12 @@ public class TaskDataSource extends BaseDataSource {
 		statusValueMap.put("1", "已开始");
 		statusValueMap.put("2", "已结束");
 		status.setValueMap(statusValueMap);
+		DataSourceIntegerField isClaim = new DataSourceIntegerField("isClaim",
+				"签收状态");
 		this.setFields(applyId, applier, applyDate, numberOfDays, content,
-				result1, result2, comment1, comment2, status);
+				result1, result2, comment1, comment2, status, isClaim);
 		this.setDataFormat(DSDataFormat.JSON);
-		//this.setDataURL("apply");
+		// this.setDataURL("apply");
 		this.setFetchDataURL("apply/fetch");
 		this.setUpdateDataURL("apply/update");
 		this.setAddDataURL("apply/add");

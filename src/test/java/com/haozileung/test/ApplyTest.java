@@ -10,9 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.RepositoryService;
@@ -71,8 +68,8 @@ public class ApplyTest {
 	@Rule
 	public ActivitiRule activitiSpringRule;
 
-	@PersistenceContext
-	public EntityManager entityManager;
+	// @PersistenceContext
+	// public EntityManager entityManager;
 
 	@Test
 	@Transactional
@@ -102,11 +99,9 @@ public class ApplyTest {
 		Iterable<Apply> applies = applyRepository.findAll();
 		for (Apply apply : applies) {
 			if (apply.getStatus().equals(0)) {
-				Map<String, Object> variables = new HashMap<String, Object>();
-				variables.put("apply", apply);
 				identityService.setAuthenticatedUserId(apply.getApplier());
 				runtimeService.startProcessInstanceByKey("vacationRequest",
-						variables);
+						apply.getApplyId().toString());
 			}
 		}
 		logger.info("Number of process instances: "

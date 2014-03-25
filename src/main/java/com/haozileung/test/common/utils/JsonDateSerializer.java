@@ -28,7 +28,7 @@ public class JsonDateSerializer extends JsonSerializer<Date> {
 	@Override
 	public void serialize(Date arg0, JsonGenerator arg1, SerializerProvider arg2)
 			throws IOException, JsonProcessingException {
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 		String formattedDate = formatter.format(arg0);
 		arg1.writeString(formattedDate);
 	}

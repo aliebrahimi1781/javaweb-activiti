@@ -5,12 +5,15 @@
  */
 package com.haozileung.test.client.widget;
 
+import java.util.Date;
+
 import com.haozileung.test.client.ds.TaskDataSource;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.events.FormSubmitFailedEvent;
 import com.smartgwt.client.widgets.form.events.FormSubmitFailedHandler;
+import com.smartgwt.client.widgets.form.fields.DateItem;
 import com.smartgwt.client.widgets.form.fields.HiddenItem;
 import com.smartgwt.client.widgets.form.fields.ResetItem;
 import com.smartgwt.client.widgets.form.fields.SubmitItem;
@@ -34,6 +37,7 @@ public class ApplyForm extends DynamicForm {
 		HiddenItem comment1 = new HiddenItem("comment1");
 		HiddenItem comment2 = new HiddenItem("comment2");
 		HiddenItem status = new HiddenItem("status");
+		HiddenItem isClaim = new HiddenItem("isClaim");
 		status.setDefaultValue(0);
 
 		SubmitItem submit = new SubmitItem("submit", "提交");
@@ -51,9 +55,10 @@ public class ApplyForm extends DynamicForm {
 				SC.say("提交失败！");
 			}
 		});
-
-		setFields(applyId, result1, result2, comment1, comment2, status,
-				submit, reset);
+		DateItem applyDate = new DateItem("applyDate");
+		applyDate.setDefaultValue(new Date());
+		setFields(applyId, applyDate, result1, result2, comment1, comment2,
+				status, isClaim, submit, reset);
 		setNumCols(2);
 		setWidth(300);
 		setAlign(Alignment.CENTER);

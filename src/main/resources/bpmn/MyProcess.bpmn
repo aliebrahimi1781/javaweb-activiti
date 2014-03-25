@@ -3,9 +3,7 @@
   <process id="vacationRequest" name="Vacation request" isExecutable="true">
     <startEvent id="request" name="开始"></startEvent>
     <endEvent id="endevent1" name="End"></endEvent>
-    <userTask id="handelRequestPM" name="项目经理审批" activiti:candidateGroups="projectManager">
-      
-    </userTask>
+    <userTask id="handelRequestPM" name="项目经理审批" activiti:candidateGroups="projectManager"></userTask>
     <sequenceFlow id="flow1" sourceRef="request" targetRef="handelRequestPM"></sequenceFlow>
     <exclusiveGateway id="requestApprovedDecisionPM" name="requestApprovedDecisionPM" default="flow3"></exclusiveGateway>
     <sequenceFlow id="flow3" name="通过" sourceRef="requestApprovedDecisionPM" targetRef="handelRequestDM">
@@ -14,11 +12,9 @@
     <sequenceFlow id="flow4" name="不通过" sourceRef="requestApprovedDecisionPM" targetRef="sendMail">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${vacationApprovedPM== 'false'}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="handelRequestDM" name="部门经理审批" activiti:candidateGroups="departmentManager">
-      
-    </userTask>
+    <userTask id="handelRequestDM" name="部门经理审批" activiti:candidateGroups="departmentManager"></userTask>
     <exclusiveGateway id="requestApprovedDecisionDM" name="requestApprovedDecisionDM" default="flow33"></exclusiveGateway>
-    <serviceTask id="sendMail" name="发送邮件提醒" activiti:expression="${ApplyService.sendMail(apply)}"></serviceTask>
+    <serviceTask id="sendMail" name="发送邮件提醒"></serviceTask>
     <sequenceFlow id="flow11" sourceRef="sendMail" targetRef="endevent1"></sequenceFlow>
     <sequenceFlow id="flow30" sourceRef="handelRequestPM" targetRef="requestApprovedDecisionPM"></sequenceFlow>
     <sequenceFlow id="flow31" sourceRef="handelRequestDM" targetRef="requestApprovedDecisionDM"></sequenceFlow>

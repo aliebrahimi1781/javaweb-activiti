@@ -31,6 +31,7 @@ public class ApproveForm extends DynamicForm {
 		setUseAllDataSourceFields(true);
 		HiddenItem applyId = new HiddenItem("applyId");
 		HiddenItem status = new HiddenItem("status");
+		HiddenItem isClaim = new HiddenItem("isClaim");
 		HiddenItem result1 = new HiddenItem();
 		HiddenItem comment1 = new HiddenItem();
 		SelectItem result2 = new SelectItem();
@@ -38,15 +39,15 @@ public class ApproveForm extends DynamicForm {
 		TextAreaItem comment2 = new TextAreaItem();
 		comment2.setRequired(true);
 		if (approveType.equals(1)) {
-			result1.setName("result1");
-			comment1.setName("comment1");
-			result2.setName("result2");
-			comment2.setName("comment2");
-		} else if (approveType.equals(2)) {
 			result1.setName("result2");
 			comment1.setName("comment2");
 			result2.setName("result1");
 			comment2.setName("comment1");
+		} else if (approveType.equals(2)) {
+			result1.setName("result1");
+			comment1.setName("comment1");
+			result2.setName("result2");
+			comment2.setName("comment2");
 		} else {
 			SC.say("审批类型出错！");
 		}
@@ -67,9 +68,8 @@ public class ApproveForm extends DynamicForm {
 		TextItem content = new TextItem("content");
 		content.setDisabled(true);
 		setFields(applyId, applier, applyDate, numberOfDays, content, status,
-				result1, comment1, result2, comment2, submit, reset);
+				result1, comment1, result2, comment2, isClaim, submit, reset);
 		setNumCols(2);
-		setGroupTitle("请假审批表");
-		setIsGroup(true);
+		setAlign(Alignment.CENTER);
 	}
 }

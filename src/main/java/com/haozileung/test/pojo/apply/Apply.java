@@ -72,6 +72,8 @@ public class Apply implements IEntity {
 	private String processInstanceId;
 	@Transient
 	private String taskId;
+	@Transient
+	private Integer isClaim;
 
 	/**
 	 * 
@@ -173,5 +175,13 @@ public class Apply implements IEntity {
 
 	public void setTaskId(String taskId) {
 		this.taskId = taskId;
+	}
+
+	public Integer getIsClaim() {
+		return isClaim;
+	}
+
+	public void setIsClaim(Integer isClaim) {
+		this.isClaim = isClaim;
 	}
 }

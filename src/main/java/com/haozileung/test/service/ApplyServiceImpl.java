@@ -6,7 +6,9 @@
 package com.haozileung.test.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.HistoryService;
@@ -39,6 +41,7 @@ import com.haozileung.test.pojo.apply.Apply;
  * @version V1.0
  */
 @Service("ApplyService")
+@Transactional
 public class ApplyServiceImpl implements IApplyService {
 
 	private final static Logger logger = LoggerFactory
@@ -92,7 +95,6 @@ public class ApplyServiceImpl implements IApplyService {
 	@Transactional
 	public List<Apply> getToDoApplyList(String userId) {
 		List<Apply> results = new ArrayList<Apply>();
-		List<Task> tasks = new ArrayList<Task>();
 
 		// 根据当前组未签收的任务
 		TaskQuery groupQuery = taskService.createTaskQuery()
@@ -100,27 +102,8 @@ public class ApplyServiceImpl implements IApplyService {
 				.taskCandidateGroup(userId).active().orderByTaskId().desc()
 				.orderByTaskCreateTime().desc();
 		List<Task> groupTasks = groupQuery.list();
-
-		// 根据当前人的ID查询
-		TaskQuery todoQuery = taskService.createTaskQuery()
-				.processDefinitionKey("vacationRequest").taskAssignee(userId)
-				.active().orderByTaskId().desc().orderByTaskCreateTime().desc();
-		List<Task> todoList = todoQuery.list();
-
-		// 根据当前人未签收的任务
-		TaskQuery claimQuery = taskService.createTaskQuery()
-				.processDefinitionKey("vacationRequest")
-				.taskCandidateUser(userId).active().orderByTaskId().desc()
-				.orderByTaskCreateTime().desc();
-		List<Task> unsignedTasks = claimQuery.list();
-
-		// 合并
-		tasks.addAll(todoList);
-		tasks.addAll(unsignedTasks);
-		tasks.addAll(groupTasks);
-
 		// 根据流程的业务ID查询实体并关联
-		for (Task task : tasks) {
+		for (Task task : groupTasks) {
 			String processInstanceId = task.getProcessInstanceId();
 			ProcessInstance processInstance = runtimeService
 					.createProcessInstanceQuery()
@@ -134,13 +117,65 @@ public class ApplyServiceImpl implements IApplyService {
 			if (apply != null) {
 				apply.setTaskId(task.getId());
 				apply.setProcessInstanceId(processInstanceId);
+				apply.setIsClaim(0);
 				results.add(apply);
 			}
 		}
+		// 根据当前人未签收的任务
+		TaskQuery claimQuery = taskService.createTaskQuery()
+				.processDefinitionKey("vacationRequest")
+				.taskCandidateUser(userId).active().orderByTaskId().desc()
+				.orderByTaskCreateTime().desc();
+		List<Task> unsignedTasks = claimQuery.list();
+		// 根据流程的业务ID查询实体并关联
+		for (Task task : unsignedTasks) {
+			String processInstanceId = task.getProcessInstanceId();
+			ProcessInstance processInstance = runtimeService
+					.createProcessInstanceQuery()
+					.processInstanceId(processInstanceId).active()
+					.singleResult();
+			String businessKey = processInstance.getBusinessKey();
+			if (businessKey == null) {
+				continue;
+			}
+			Apply apply = applyRepository.find(Integer.valueOf(businessKey));
+			if (apply != null) {
+				apply.setTaskId(task.getId());
+				apply.setProcessInstanceId(processInstanceId);
+				apply.setIsClaim(0);
+				results.add(apply);
+			}
+		}
+		// 根据当前人的ID查询
+		TaskQuery todoQuery = taskService.createTaskQuery()
+				.processDefinitionKey("vacationRequest").taskAssignee(userId)
+				.active().orderByTaskId().desc().orderByTaskCreateTime().desc();
+		List<Task> todoList = todoQuery.list();
+		// 根据流程的业务ID查询实体并关联
+		for (Task task : todoList) {
+			String processInstanceId = task.getProcessInstanceId();
+			ProcessInstance processInstance = runtimeService
+					.createProcessInstanceQuery()
+					.processInstanceId(processInstanceId).active()
+					.singleResult();
+			String businessKey = processInstance.getBusinessKey();
+			if (businessKey == null) {
+				continue;
+			}
+			Apply apply = applyRepository.find(Integer.valueOf(businessKey));
+			if (apply != null) {
+				apply.setTaskId(task.getId());
+				apply.setProcessInstanceId(processInstanceId);
+				apply.setIsClaim(1);
+				results.add(apply);
+			}
+		}
+
 		return results;
 	}
 
 	@Override
+	@Transactional
 	public List<Apply> getRunningApplyList() {
 		List<Apply> results = new ArrayList<Apply>();
 		ProcessInstanceQuery query = runtimeService
@@ -155,19 +190,22 @@ public class ApplyServiceImpl implements IApplyService {
 			if (businessKey == null) {
 				continue;
 			}
-			Apply leave = applyRepository.find(Integer.valueOf(businessKey));
-			results.add(leave);
+			Apply apply = applyRepository.find(Integer.valueOf(businessKey));
+			if (apply != null) {
+				results.add(apply);
 
-			// 设置当前任务信息
-			List<Task> tasks = taskService.createTaskQuery()
-					.processInstanceId(processInstance.getId()).active()
-					.orderByTaskCreateTime().desc().listPage(0, 1);
-			leave.setTaskId(tasks.get(0).getId());
+				// 设置当前任务信息
+				List<Task> tasks = taskService.createTaskQuery()
+						.processInstanceId(processInstance.getId()).active()
+						.orderByTaskCreateTime().desc().listPage(0, 1);
+				apply.setTaskId(tasks.get(0).getId());
+			}
 		}
 		return results;
 	}
 
 	@Override
+	@Transactional
 	public List<Apply> getFinishedApplyList() {
 		List<Apply> results = new ArrayList<Apply>();
 		HistoricProcessInstanceQuery query = historyService
@@ -179,9 +217,38 @@ public class ApplyServiceImpl implements IApplyService {
 		// 关联业务实体
 		for (HistoricProcessInstance historicProcessInstance : list) {
 			String businessKey = historicProcessInstance.getBusinessKey();
-			Apply leave = applyRepository.find(Integer.valueOf(businessKey));
-			results.add(leave);
+			if (businessKey != null) {
+				Apply apply = applyRepository
+						.find(Integer.valueOf(businessKey));
+				if (apply != null) {
+					results.add(apply);
+				}
+			}
 		}
 		return results;
+	}
+
+	@Override
+	public boolean updateApply(Apply apply, String userId) {
+		if (apply.getApplyId() == null) {
+			return false;
+		}
+		// Apply old = applyRepository.find(apply.getApplyId());
+		Map<String, Object> var = new HashMap<String, Object>();
+		if (apply.getResult1() != null) {
+			var.put("vacationApprovedPM", apply.getResult1() == 1 ? true
+					: false);
+		}
+		if (apply.getResult2() != null) {
+			var.put("vacationApprovedDM", apply.getResult2() == 1 ? true
+					: false);
+		}
+		try {
+			taskService.complete(apply.getTaskId(), var);
+		} catch (Exception e) {
+			return false;
+		}
+		applyRepository.save(apply);
+		return true;
 	}
 }
