@@ -1,7 +1,9 @@
 package com.haozileung.test.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
@@ -71,13 +73,47 @@ public class ApplyController {// extends BaseController<Apply> {
 
 	@RequestMapping("/update")
 	@ResponseBody
-	public Response<Apply> updateApply(Apply apply, String userId) {
+	public Response<Apply> updateApply(Apply apply, String userId, String type) {
 
 		Response<Apply> response = new Response<Apply>();
-		if (applyService.updateApply(apply, userId)) {
-			response.setStatus(0);
+		Map<String, Object> var = new HashMap<String, Object>();
+		if (userId.equals("pm") && apply.getResult1() != null) {
+			var.put("pmPass", apply.getResult1() == 1 ? true : false);
+		}
+		if (userId.equals("dm") && apply.getResult2() != null) {
+			var.put("dmPass", apply.getResult2() == 1 ? true : false);
+		}
+		if (type != null) {
+			if (userId.equals("Haozi") && type.equals("reApply")) {
+				var.put("reApply", true);
+				if (applyService.updateApplyComplete(apply, userId, var)) {
+					response.setStatus(0);
+				} else {
+					response.setStatus(-1);
+				}
+			}
+			if (type.equals("claim")) {
+				if (applyService.updateApplyClaim(apply, userId)) {
+					response.setStatus(0);
+				} else {
+					response.setStatus(-1);
+				}
+			}
+			if (type.equals("complete")) {
+				if (applyService.updateApplyComplete(apply, userId, var)) {
+					response.setStatus(0);
+				} else {
+					response.setStatus(-1);
+				}
+			}
 		} else {
-			response.setStatus(-1);
+			if (userId.equals("Haozi")) {
+				if (applyService.updateApplyComplete(apply, userId, var)) {
+					response.setStatus(0);
+				} else {
+					response.setStatus(-1);
+				}
+			}
 		}
 		return response;
 	}

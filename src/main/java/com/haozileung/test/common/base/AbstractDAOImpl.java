@@ -9,7 +9,6 @@ import java.io.Serializable;
 
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.googlecode.genericdao.dao.hibernate.GenericDAOImpl;
 

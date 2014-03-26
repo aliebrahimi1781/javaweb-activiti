@@ -75,7 +75,7 @@ public class TaskDataSource extends BaseDataSource {
 		statusValueMap.put("2", "已结束");
 		status.setValueMap(statusValueMap);
 		DataSourceIntegerField isClaim = new DataSourceIntegerField("isClaim",
-				"签收状态");
+				"操作");
 		this.setFields(applyId, applier, applyDate, numberOfDays, content,
 				result1, result2, comment1, comment2, status, isClaim);
 		this.setDataFormat(DSDataFormat.JSON);

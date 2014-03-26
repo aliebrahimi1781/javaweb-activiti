@@ -3,10 +3,9 @@
  * 创建时间：2014年3月3日 下午2:53:09 
  * @author lianghaopeng
  */
-package com.haozileung.test.service;
+package com.haozileung.test.service.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.haozileung.test.dao.IApplyDAO;
 import com.haozileung.test.pojo.apply.Apply;
+import com.haozileung.test.service.IApplyService;
 
 /**
  * <p>
@@ -41,7 +41,6 @@ import com.haozileung.test.pojo.apply.Apply;
  * @version V1.0
  */
 @Service("ApplyService")
-@Transactional
 public class ApplyServiceImpl implements IApplyService {
 
 	private final static Logger logger = LoggerFactory
@@ -68,12 +67,12 @@ public class ApplyServiceImpl implements IApplyService {
 			ProcessInstance processInstance = null;
 			try {
 				processInstance = runtimeService.startProcessInstanceByKey(
-						"vacationRequest", businessKey);
+						"leave", businessKey);
 				String processInstanceId = processInstance.getId();
 				apply.setProcessInstanceId(processInstanceId);
 				logger.debug(
 						"start process of {key={}, bkey={}, pid={}, variables={}}",
-						new Object[] { "vacationRequest", businessKey,
+						new Object[] { "leave", businessKey,
 								processInstanceId });
 				return true;
 			} catch (ActivitiException e) {
@@ -92,15 +91,13 @@ public class ApplyServiceImpl implements IApplyService {
 	}
 
 	@Override
-	@Transactional
 	public List<Apply> getToDoApplyList(String userId) {
 		List<Apply> results = new ArrayList<Apply>();
 
 		// 根据当前组未签收的任务
 		TaskQuery groupQuery = taskService.createTaskQuery()
-				.processDefinitionKey("vacationRequest")
-				.taskCandidateGroup(userId).active().orderByTaskId().desc()
-				.orderByTaskCreateTime().desc();
+				.processDefinitionKey("leave").taskCandidateGroup(userId)
+				.active().orderByTaskId().desc().orderByTaskCreateTime().desc();
 		List<Task> groupTasks = groupQuery.list();
 		// 根据流程的业务ID查询实体并关联
 		for (Task task : groupTasks) {
@@ -123,9 +120,8 @@ public class ApplyServiceImpl implements IApplyService {
 		}
 		// 根据当前人未签收的任务
 		TaskQuery claimQuery = taskService.createTaskQuery()
-				.processDefinitionKey("vacationRequest")
-				.taskCandidateUser(userId).active().orderByTaskId().desc()
-				.orderByTaskCreateTime().desc();
+				.processDefinitionKey("leave").taskCandidateUser(userId)
+				.active().orderByTaskId().desc().orderByTaskCreateTime().desc();
 		List<Task> unsignedTasks = claimQuery.list();
 		// 根据流程的业务ID查询实体并关联
 		for (Task task : unsignedTasks) {
@@ -148,8 +144,8 @@ public class ApplyServiceImpl implements IApplyService {
 		}
 		// 根据当前人的ID查询
 		TaskQuery todoQuery = taskService.createTaskQuery()
-				.processDefinitionKey("vacationRequest").taskAssignee(userId)
-				.active().orderByTaskId().desc().orderByTaskCreateTime().desc();
+				.processDefinitionKey("leave").taskAssignee(userId).active()
+				.orderByTaskId().desc().orderByTaskCreateTime().desc();
 		List<Task> todoList = todoQuery.list();
 		// 根据流程的业务ID查询实体并关联
 		for (Task task : todoList) {
@@ -175,13 +171,11 @@ public class ApplyServiceImpl implements IApplyService {
 	}
 
 	@Override
-	@Transactional
 	public List<Apply> getRunningApplyList() {
 		List<Apply> results = new ArrayList<Apply>();
 		ProcessInstanceQuery query = runtimeService
-				.createProcessInstanceQuery()
-				.processDefinitionKey("vacationRequest").active()
-				.orderByProcessInstanceId().desc();
+				.createProcessInstanceQuery().processDefinitionKey("leave")
+				.active().orderByProcessInstanceId().desc();
 		List<ProcessInstance> list = query.list();
 
 		// 关联业务实体
@@ -205,12 +199,11 @@ public class ApplyServiceImpl implements IApplyService {
 	}
 
 	@Override
-	@Transactional
 	public List<Apply> getFinishedApplyList() {
 		List<Apply> results = new ArrayList<Apply>();
 		HistoricProcessInstanceQuery query = historyService
 				.createHistoricProcessInstanceQuery()
-				.processDefinitionKey("vacationRequest").finished()
+				.processDefinitionKey("leave").finished()
 				.orderByProcessInstanceEndTime().desc();
 		List<HistoricProcessInstance> list = query.list();
 
@@ -229,19 +222,24 @@ public class ApplyServiceImpl implements IApplyService {
 	}
 
 	@Override
-	public boolean updateApply(Apply apply, String userId) {
+	public boolean updateApplyClaim(Apply apply, String userId) {
 		if (apply.getApplyId() == null) {
 			return false;
 		}
-		// Apply old = applyRepository.find(apply.getApplyId());
-		Map<String, Object> var = new HashMap<String, Object>();
-		if (apply.getResult1() != null) {
-			var.put("vacationApprovedPM", apply.getResult1() == 1 ? true
-					: false);
+		try {
+			taskService.claim(apply.getTaskId(), userId);
+		} catch (Exception e) {
+			return false;
 		}
-		if (apply.getResult2() != null) {
-			var.put("vacationApprovedDM", apply.getResult2() == 1 ? true
-					: false);
+		applyRepository.save(apply);
+		return true;
+	}
+
+	@Override
+	public boolean updateApplyComplete(Apply apply, String userId,
+			Map<String, Object> var) {
+		if (apply.getApplyId() == null) {
+			return false;
 		}
 		try {
 			taskService.complete(apply.getTaskId(), var);
@@ -250,5 +248,10 @@ public class ApplyServiceImpl implements IApplyService {
 		}
 		applyRepository.save(apply);
 		return true;
+	}
+
+	@Override
+	public void sendMail() {
+		System.out.println("审批不通过，测试~");
 	}
 }

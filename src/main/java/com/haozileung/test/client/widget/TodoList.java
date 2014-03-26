@@ -11,8 +11,7 @@ import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
-import com.smartgwt.client.widgets.grid.events.RecordDoubleClickEvent;
-import com.smartgwt.client.widgets.grid.events.RecordDoubleClickHandler;
+import com.smartgwt.client.widgets.layout.HLayout;
 
 /**
  * 
@@ -26,17 +25,19 @@ import com.smartgwt.client.widgets.grid.events.RecordDoubleClickHandler;
  */
 public class TodoList extends ListGrid {
 
+	private int type;
+
 	public TodoList(final Integer type) {
+		this.type = type;
 		setDataSource(TaskDataSource.getInstance());
 		setAutoFetchData(true);
 		Criteria c = new Criteria();
 		setUseAllDataSourceFields(true);
 		if (type.equals(1)) {
-			c.setAttribute("userId", "projectManager");
-
+			c.setAttribute("userId", "pm");
 		}
 		if (type.equals(2)) {
-			c.setAttribute("userId", "departmentManager");
+			c.setAttribute("userId", "dm");
 
 		}
 		ListGridField result1 = new ListGridField("result1");
@@ -62,29 +63,11 @@ public class TodoList extends ListGrid {
 		ListGridField status = new ListGridField("status");
 		status.setAlign(Alignment.CENTER);
 		status.setWidth("10%");
-		ListGridField btnField = new ListGridField("isClaim", "签收状态");
+		ListGridField btnField = new ListGridField("isClaim");
 		btnField.setWidth("10%");
 		setFields(applier, applyDate, numberOfDays, content, result1, status,
 				comment1, result2, comment2, btnField);
 		setInitialCriteria(c);
-		addRecordDoubleClickHandler(new RecordDoubleClickHandler() {
-
-			@Override
-			public void onRecordDoubleClick(RecordDoubleClickEvent event) {
-				Window formWin = new Window();
-				formWin.setTitle("请假审批");
-				formWin.setHeight("320");
-				formWin.setWidth("300");
-				ApproveForm form = new ApproveForm(type);
-				form.setMargin(10);
-				form.editRecord(event.getRecord());
-				formWin.addItem(form);
-				formWin.setIsModal(true);
-				formWin.setShowModalMask(true);
-				formWin.centerInPage();
-				formWin.show();
-			}
-		});
 		setShowRecordComponents(true);
 		setShowRecordComponentsByCell(true);
 	}
@@ -95,21 +78,73 @@ public class TodoList extends ListGrid {
 		final TodoList list = this;
 		if (this.getFieldName(colNum).equals("isClaim")) {
 			IButton btn = new IButton();
-			if (record.getAttributeAsInt("isClaim").equals(1)) {
-				btn.setTitle("已签收");
+			if (type == 1) {
+				record.setAttribute("userId", "pm");
 			}
-			if (record.getAttributeAsInt("isClaim").equals(0)) {
-				btn.setTitle("未签收");
-				btn.addClickHandler(new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						record.setAttribute("isClaim", 1);
-						list.updateData(record);
-					}
-				});
+			if (type == 2) {
+				record.setAttribute("userId", "dm");
 			}
+			if (record.getAttributeAsString("isClaim") != null
+					&& !record.getAttributeAsString("isClaim").isEmpty()) {
+				if (record.getAttributeAsInt("isClaim").equals(1)) {
+					record.setAttribute("type", "complete");
+					btn.setTitle("审批");
+					btn.addClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							final Window formWin = new Window();
+							final ApproveForm form = new ApproveForm(type);
+							HLayout buttonLayout = new HLayout();
+							IButton submit = new IButton("提交");
+							submit.addClickHandler(new ClickHandler() {
+								@Override
+								public void onClick(ClickEvent event) {
+									if (form.validate()) {
+										form.submit();
+										form.reset();
+										list.invalidateCache();
+									}
+								}
+							});
+							IButton reset = new IButton("重置");
+							reset.addClickHandler(new ClickHandler() {
 
+								@Override
+								public void onClick(ClickEvent event) {
+									form.reset();
+								}
+							});
+							buttonLayout.addMember(submit);
+							buttonLayout.addMember(reset);
+							buttonLayout.setAlign(Alignment.CENTER);
+							formWin.setTitle("请假审批");
+							formWin.setHeight("320");
+							formWin.setWidth("300");
+							form.setMargin(10);
+							form.editRecord(record);
+							formWin.addItem(form);
+							formWin.addItem(buttonLayout);
+							formWin.setIsModal(true);
+							formWin.setShowModalMask(true);
+							formWin.centerInPage();
+							formWin.show();
+
+						}
+					});
+				}
+				if (record.getAttributeAsInt("isClaim").equals(0)) {
+					record.setAttribute("type", "claim");
+					btn.setTitle("未签收");
+					btn.addClickHandler(new ClickHandler() {
+
+						@Override
+						public void onClick(ClickEvent event) {
+							record.setAttribute("isClaim", 1);
+							list.updateData(record);
+						}
+					});
+				}
+			}
 			return btn;
 		} else {
 			return super.createRecordComponent(record, colNum);

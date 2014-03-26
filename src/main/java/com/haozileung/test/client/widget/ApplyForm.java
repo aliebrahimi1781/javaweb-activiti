@@ -15,8 +15,7 @@ import com.smartgwt.client.widgets.form.events.FormSubmitFailedEvent;
 import com.smartgwt.client.widgets.form.events.FormSubmitFailedHandler;
 import com.smartgwt.client.widgets.form.fields.DateItem;
 import com.smartgwt.client.widgets.form.fields.HiddenItem;
-import com.smartgwt.client.widgets.form.fields.ResetItem;
-import com.smartgwt.client.widgets.form.fields.SubmitItem;
+import com.smartgwt.client.widgets.form.fields.TextItem;
 
 /**
  * <p>
@@ -33,21 +32,14 @@ public class ApplyForm extends DynamicForm {
 		setUseAllDataSourceFields(true);
 		HiddenItem applyId = new HiddenItem("applyId");
 		HiddenItem result1 = new HiddenItem("result1");
+		result1.setDefaultValue(-1);
 		HiddenItem result2 = new HiddenItem("result2");
+		result2.setDefaultValue(-1);
 		HiddenItem comment1 = new HiddenItem("comment1");
 		HiddenItem comment2 = new HiddenItem("comment2");
 		HiddenItem status = new HiddenItem("status");
 		HiddenItem isClaim = new HiddenItem("isClaim");
 		status.setDefaultValue(0);
-
-		SubmitItem submit = new SubmitItem("submit", "提交");
-		ResetItem reset = new ResetItem("reset", "重置");
-		submit.setStartRow(false);
-		submit.setEndRow(false);
-		submit.setAlign(Alignment.CENTER);
-		reset.setStartRow(false);
-		reset.setEndRow(false);
-		reset.setAlign(Alignment.CENTER);
 		addFormSubmitFailedHandler(new FormSubmitFailedHandler() {
 
 			@Override
@@ -57,8 +49,11 @@ public class ApplyForm extends DynamicForm {
 		});
 		DateItem applyDate = new DateItem("applyDate");
 		applyDate.setDefaultValue(new Date());
-		setFields(applyId, applyDate, result1, result2, comment1, comment2,
-				status, isClaim, submit, reset);
+		TextItem applier = new TextItem("applier");
+		applier.setDefaultValue("Haozi");
+		applier.disable();
+		setFields(applyId, applier, applyDate, result1, result2, comment1,
+				comment2, status, isClaim);
 		setNumCols(2);
 		setWidth(300);
 		setAlign(Alignment.CENTER);
